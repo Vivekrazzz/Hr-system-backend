@@ -1,0 +1,100 @@
+﻿
+	Keyword: None
+	Sub SQL: None
+	FAILED SQL: INSERT INTO "authentication_user" ("password", 
+"last_login", "is_superuser", "username", "first_name", "last_name", 
+"is_staff", "is_active", "date_joined", "email", "role", 
+"employee_id", "phone", "department", "designation", 
+"date_of_joining") VALUES (%(0)s, %(1)s, %(2)s, %(3)s, %(4)s, %(5)s, 
+%(6)s, %(7)s, %(8)s, %(9)s, %(10)s, %(11)s, %(12)s, %(13)s, %(14)s, 
+%(15)s)
+	Params: ['pbkdf2_sha256$260000$8LKmELGdHZ4j72CqHVPCAJ$uYpx+7EFIJwj7R
+FZcK0o7cs/o48QNx8KXoMGWq56vqs=', None, False, 'test2@example.com', 
+'', '', False, True, datetime.datetime(2026, 2, 6, 11, 53, 33, 
+305469), 'test2@example.com', 'employee', None, None, None, None, 
+None]
+	Version: 1.3.6
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\cursor.py", line 59, in execute
+    raise db_exe from e
+djongo.database.DatabaseError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Vivekrazzz\OneDrive\Desktop\HR 
+system]\backend\debug_create.py", line 13, in <module>
+    user = User.objects.create_user(email='test2@example.com', 
+password='password123', role='employee')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\OneDrive\Desktop\HR 
+system]\backend\authentication\models.py", line 12, in create_user
+    user.save(using=self._db)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\contrib\auth\base_user.py", line 67, in save
+    super().save(*args, **kwargs)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 776, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, 
+returning_fields, raw)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 919, in _do_insert
+    return manager._insert(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\query.py", line 1270, in _insert
+    return 
+query.get_compiler(using=using).execute_sql(returning_fields)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\sql\compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, 
+executor=self._execute)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 75, in 
+_execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 79, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\cursor.py", line 59, in execute
+    raise db_exe from e
+django.db.utils.DatabaseError

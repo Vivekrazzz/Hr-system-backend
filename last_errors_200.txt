@@ -1,0 +1,168 @@
+﻿Attempting to create user...
+Type: <class 'django.db.utils.DatabaseError'>
+Error: 
+Cause: 
+python : Traceback (most recent call last):
+At line:1 char:1
++ python debug_create.py > error_log.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent  
+   call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\sql2mongo\query.py", line 857, in parse
+    return handler(self, statement)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\sql2mongo\query.py", line 929, in _insert
+    query.execute()
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\sql2mongo\query.py", line 397, in execute
+    res = self.db[self.left_table].insert_many(docs, ordered=False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\pymongo\collection.py", line 770, in insert_many
+    blk.execute(write_concern, session=session)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\pymongo\bulk.py", line 533, in execute
+    return self.execute_command(generator, write_concern, session)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\pymongo\bulk.py", line 366, in execute_command
+    _raise_bulk_write_error(full_result)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\pymongo\bulk.py", line 140, in _raise_bulk_write_error
+    raise BulkWriteError(full_result)
+pymongo.errors.BulkWriteError: batch op errors occurred, full error: 
+{'writeErrors': [{'index': 0, 'code': 11000, 'errmsg': 'E11000 
+duplicate key error collection: hr_system_db.authentication_user 
+index: employee_id dup key: { employee_id: null }', 'keyPattern': 
+{'employee_id': 1}, 'keyValue': {'employee_id': None}, 'op': 
+{'password': 'pbkdf2_sha256$260000$8LKmELGdHZ4j72CqHVPCAJ$uYpx+7EFIJw
+j7RFZcK0o7cs/o48QNx8KXoMGWq56vqs=', 'last_login': None, 
+'is_superuser': False, 'username': 'test2@example.com', 
+'first_name': '', 'last_name': '', 'is_staff': False, 'is_active': 
+True, 'date_joined': datetime.datetime(2026, 2, 6, 11, 53, 33, 
+305469), 'email': 'test2@example.com', 'role': 'employee', 
+'employee_id': None, 'phone': None, 'department': None, 
+'designation': None, 'date_of_joining': None, '_id': 
+ObjectId('6985d63e5d111dd6ae325b67')}}], 'writeConcernErrors': [], 
+'nInserted': 0, 'nUpserted': 0, 'nMatched': 0, 'nModified': 0, 
+'nRemoved': 0, 'upserted': []}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\cursor.py", line 51, in execute
+    self.result = Query(
+                  ^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\sql2mongo\query.py", line 784, in __init__
+    self._query = self.parse()
+                  ^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\sql2mongo\query.py", line 869, in parse
+    raise exe from e
+djongo.exceptions.SQLDecodeError: 
+
+	Keyword: None
+	Sub SQL: None
+	FAILED SQL: INSERT INTO "authentication_user" ("password", 
+"last_login", "is_superuser", "username", "first_name", "last_name", 
+"is_staff", "is_active", "date_joined", "email", "role", 
+"employee_id", "phone", "department", "designation", 
+"date_of_joining") VALUES (%(0)s, %(1)s, %(2)s, %(3)s, %(4)s, %(5)s, 
+%(6)s, %(7)s, %(8)s, %(9)s, %(10)s, %(11)s, %(12)s, %(13)s, %(14)s, 
+%(15)s)
+	Params: ['pbkdf2_sha256$260000$8LKmELGdHZ4j72CqHVPCAJ$uYpx+7EFIJwj7R
+FZcK0o7cs/o48QNx8KXoMGWq56vqs=', None, False, 'test2@example.com', 
+'', '', False, True, datetime.datetime(2026, 2, 6, 11, 53, 33, 
+305469), 'test2@example.com', 'employee', None, None, None, None, 
+None]
+	Version: 1.3.6
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\cursor.py", line 59, in execute
+    raise db_exe from e
+djongo.database.DatabaseError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Vivekrazzz\OneDrive\Desktop\HR 
+system]\backend\debug_create.py", line 13, in <module>
+    user = User.objects.create_user(email='test2@example.com', 
+password='password123', role='employee')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\OneDrive\Desktop\HR 
+system]\backend\authentication\models.py", line 12, in create_user
+    user.save(using=self._db)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\contrib\auth\base_user.py", line 67, in save
+    super().save(*args, **kwargs)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 776, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, 
+returning_fields, raw)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\base.py", line 919, in _do_insert
+    return manager._insert(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\query.py", line 1270, in _insert
+    return 
+query.get_compiler(using=using).execute_sql(returning_fields)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\models\sql\compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, 
+executor=self._execute)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 75, in 
+_execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 79, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vivekrazzz\AppData\Roaming\Python\Python312\site-pac
+kages\djongo\cursor.py", line 59, in execute
+    raise db_exe from e
+django.db.utils.DatabaseError
