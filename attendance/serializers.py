@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Attendance
+from .models import Attendance, LeaveRequest
 from tasks.serializers import TaskSerializer, MongoPrimaryKeyRelatedField
 from authentication.models import User
 
@@ -10,7 +10,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
     employee = serializers.CharField(source='employee.pk', read_only=True)
     total_duration_display = serializers.SerializerMethodField()
     entries = serializers.SerializerMethodField()
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(source='_id', read_only=True)
     
     class Meta:
         model = Attendance
@@ -42,3 +42,19 @@ class AttendanceSerializer(serializers.ModelSerializer):
                 return f"{hours}h {minutes}m"
             return f"{minutes}m"
         return "0m"
+
+class LeaveRequestSerializer(serializers.ModelSerializer):
+    employee_details = UserSerializer(source='employee', read_only=True)
+    manager_details = UserSerializer(source='manager', read_only=True)
+    employee = serializers.CharField(source='employee.pk', read_only=True)
+    manager = serializers.CharField(source='manager.pk', read_only=True, allow_null=True)
+    id = serializers.CharField(source='_id', read_only=True)
+    
+    class Meta:
+        model = LeaveRequest
+        fields = (
+            'id', 'employee', 'manager', 'employee_details', 'manager_details',
+            'start_date', 'end_date', 'leave_type', 'reason', 'status',
+            'applied_at', 'updated_at'
+        )
+        read_only_fields = ('employee', 'manager', 'status', 'applied_at', 'updated_at')

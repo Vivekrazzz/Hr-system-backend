@@ -30,12 +30,14 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, default='employee') # Removed strict choices
     employee_id = models.CharField(max_length=20, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     
     # Additional Details
     phone = models.CharField(max_length=15, null=True, blank=True)
     department = models.CharField(max_length=100, null=True, blank=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
     date_of_joining = models.DateField(null=True, blank=True)
+    manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates')
     
     objects = UserManager()
 

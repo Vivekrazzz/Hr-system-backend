@@ -40,11 +40,19 @@ class ProjectSerializer(serializers.ModelSerializer):
     created_by_details = UserSerializer(source='created_by', read_only=True)
     created_by = MongoPrimaryKeyRelatedField(read_only=True)
     id = serializers.CharField(read_only=True)
+    progress = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'company_name', 'description', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members']
+        fields = ['id', 'name', 'company_name', 'description', 'status', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'progress']
         read_only_fields = ['created_by', 'created_at', 'updated_at']
+
+    def get_progress(self, obj):
+        total_tasks = obj.tasks.count()
+        if total_tasks == 0:
+            return 0
+        completed_tasks = obj.tasks.filter(status='completed').count()
+        return round((completed_tasks / total_tasks) * 100, 2)
 
 class ProjectInvitationSerializer(serializers.ModelSerializer):
     user = MongoPrimaryKeyRelatedField(queryset=User.objects.all())

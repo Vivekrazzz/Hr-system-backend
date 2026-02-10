@@ -6,3 +6,7 @@ djangorestframework-simplejwt
 pymongo==3.12.3
 cryptography
 python-dotenv
+gunicorn
+whitenoise
+dnspython
+certifi
