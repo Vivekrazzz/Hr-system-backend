@@ -121,3 +121,73 @@ class AttendanceStatusView(generics.RetrieveAPIView):
             "is_checked_in": is_checked_in, 
             "attendance": AttendanceSerializer(attendance).data if attendance else None
         })
+
+# Leave Management Views
+from .models import LeaveRequest
+from .serializers import LeaveRequestSerializer
+
+class LeaveRequestView(generics.ListCreateAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return LeaveRequest.objects.filter(employee=self.request.user).order_by('-applied_on')
+
+    def perform_create(self, serializer):
+        serializer.save(employee=self.request.user)
+
+class SubordinateLeaveListView(generics.ListAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'admin':
+            return LeaveRequest.objects.all().order_by('-applied_on')
+        # If manager, show only their subordinates' leaves
+        # This assumes User model has a manager field as seen in earlier turns
+        return LeaveRequest.objects.filter(employee__manager=user).order_by('-applied_on')
+
+class LeaveApprovalView(generics.UpdateAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        from bson import ObjectId
+        from django.shortcuts import get_object_or_404
+        pk = self.kwargs.get('pk')
+        if pk and isinstance(pk, str) and len(pk) == 24:
+            try: pk = ObjectId(pk)
+            except: pass
+        return get_object_or_404(LeaveRequest, pk=pk)
+
+    def patch(self, request, *args, **kwargs):
+        leave_request = self.get_object()
+        user = request.user
+        
+        # Check permissions: only manager or admin can approve
+        if user.role != 'admin' and leave_request.employee.manager != user:
+            return Response({"error": "Not authorized to process this leave request"}, status=status.HTTP_403_FORBIDDEN)
+            
+        status_val = request.data.get('status')
+        if status_val not in ['approved', 'rejected']:
+            return Response({"error": "Invalid status value"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        leave_request.status = status_val
+        leave_request.processed_by = user
+        leave_request.process_note = request.data.get('note', '')
+        leave_request.save()
+        
+        return Response(LeaveRequestSerializer(leave_request).data)
+
+class WhosOutView(generics.ListAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        today = timezone.now().date()
+        return LeaveRequest.objects.filter(
+            status='approved',
+            start_date__lte=today,
+            end_date__gte=today
+        )

@@ -11,11 +11,13 @@ urlpatterns = [
     path('assign/', AssignTaskView.as_view(), name='assign_task'),
     path('update/<str:pk>/', UpdateTaskView.as_view(), name='update_task'),
     path('delete/<str:pk>/', TaskDeleteView.as_view(), name='delete_task'),
-    path('<str:pk>/', TaskDetailView.as_view(), name='task_detail'),
     
-    # TimeLog endpoints
+    # TimeLog endpoints (Moved above generic task detail to avoid being captured as pk)
     path('timelogs/', TimeLogListCreateView.as_view(), name='timelog_list_create'),
     path('timelogs/my/', MyTimeLogsView.as_view(), name='my_timelogs'),
     path('timelogs/<str:pk>/', TimeLogDetailView.as_view(), name='timelog_detail'),
+
+    # Generic Task Detail (Should be last)
+    path('<str:pk>/', TaskDetailView.as_view(), name='task_detail'),
 ]
 

@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/attendance/', include('attendance.urls')),
     path('api/projects/', include('projects.urls')),
     path('api/chat/', include('chat.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ]
 
 from django.conf import settings

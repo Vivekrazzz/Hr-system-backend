@@ -17,7 +17,7 @@ class Attendance(models.Model):
         unique_together = ('employee', 'date')
 
     def calculate_total_hours(self):
-        from dateutil import parser
+        from django.utils.dateparse import parse_datetime
         from django.utils import timezone
         total_seconds = 0
         for entry in self.entries:
@@ -25,8 +25,8 @@ class Attendance(models.Model):
                 ci = entry.get('check_in')
                 co = entry.get('check_out')
                 
-                if isinstance(ci, str): ci = parser.isoparse(ci)
-                if isinstance(co, str): co = parser.isoparse(co)
+                if isinstance(ci, str): ci = parse_datetime(ci)
+                if isinstance(co, str): co = parse_datetime(co)
                 
                 if ci and co:
                     # Ensure both are aware for comparison
@@ -38,3 +38,43 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.employee.email} - {self.date}"
+
+class LeaveRequest(models.Model):
+    _id = mongo_models.ObjectIdField(primary_key=True)
+    @property
+    def id(self):
+        return self._id
+        
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    
+    LEAVE_TYPES = (
+        ('sick', 'Sick Leave'),
+        ('casual', 'Casual Leave'),
+        ('vacation', 'Vacation'),
+        ('other', 'Other'),
+    )
+
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='leave_requests')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    leave_type = models.CharField(max_length=20, choices=LEAVE_TYPES, default='casual')
+    reason = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    applied_on = models.DateTimeField(auto_now_add=True)
+    
+    # Who approved/rejected it
+    processed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='processed_leaves'
+    )
+    process_note = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.employee.email} - {self.leave_type} ({self.status})"

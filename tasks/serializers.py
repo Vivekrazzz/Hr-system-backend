@@ -76,7 +76,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class TimeLogSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='_id', read_only=True)
-    employee = MongoPrimaryKeyRelatedField(queryset=User.objects.all())
+    employee = MongoPrimaryKeyRelatedField(read_only=True)
     employee_details = UserSerializer(source='employee', read_only=True)
     task = MongoPrimaryKeyRelatedField(queryset=Task.objects.all())
     task_details = TaskSerializer(source='task', read_only=True)
@@ -84,7 +84,7 @@ class TimeLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeLog
         fields = ['id', 'employee', 'employee_details', 'task', 'task_details', 'date', 'hours', 'description', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
+        read_only_fields = ['employee', 'created_at', 'updated_at']
 
     def to_internal_value(self, data):
         data_copy = data.copy() if hasattr(data, 'copy') else data

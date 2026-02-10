@@ -42,3 +42,14 @@ class AttendanceSerializer(serializers.ModelSerializer):
                 return f"{hours}h {minutes}m"
             return f"{minutes}m"
         return "0m"
+
+from .models import LeaveRequest
+
+class LeaveRequestSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(read_only=True)
+    employee_details = UserSerializer(source='employee', read_only=True)
+    processed_by_details = UserSerializer(source='processed_by', read_only=True)
+
+    class Meta:
+        model = LeaveRequest
+        fields = '__all__'

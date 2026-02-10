@@ -1,38 +1,41 @@
 import os
 import django
-from django.conf import settings
+import sys
 
-# Setup Django
+# Append current directory to sys.path
+sys.path.append(os.getcwd())
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from projects.models import Project, ProjectMember
-from projects.serializers import ProjectSerializer
 from authentication.models import User
+from authentication.serializers import UserSerializer
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
 def test_serialization():
+    user = User.objects.filter(email='vivekrazzz111@gmail.com').first()
+    if not user:
+        user = User.objects.all().first()
+        if not user:
+            print("No users found in database.")
+            return
+
+    print(f"Testing for user: {user.email}")
+    
+    # Simulate a request for serializer context
+    factory = APIRequestFactory()
+    request = factory.get('/')
+    
+    serializer = UserSerializer(user, context={'request': request})
     try:
-        projects = Project.objects.all()
-        print(f"Found {projects.count()} projects.")
-        
-        factory = APIRequestFactory()
-        request = factory.get('/')
-        
-        for p in projects:
-            try:
-                print(f"Serializing project: {p.name} ({p.pk})")
-                serializer = ProjectSerializer(p, context={'request': Request(request)})
-                data = serializer.data
-                # print(f"  Success: {data['name']}")
-            except Exception as e:
-                print(f"  FAILED to serialize {p.pk}: {str(e)}")
-                import traceback
-                traceback.print_exc()
-        
+        data = serializer.data
+        print("Serialization successful!")
+        print("Data keys:", list(data.keys()))
+        print("Avatar URL:", data.get('avatar'))
     except Exception as e:
         import traceback
+        print("Serialization FAILED:")
         traceback.print_exc()
 
 if __name__ == "__main__":
