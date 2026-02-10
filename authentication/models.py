@@ -37,6 +37,7 @@ class User(AbstractUser):
     department = models.CharField(max_length=100, null=True, blank=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
     date_of_joining = models.DateField(null=True, blank=True)
+    manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates')
     
     objects = UserManager()
 

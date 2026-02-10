@@ -3,15 +3,26 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
+    manager_details = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         fields = ('id', 'email', 'first_name', 'last_name', 'role', 'employee_id', 
-                  'phone', 'department', 'designation', 'date_of_joining', 'password', 'avatar')
+                  'phone', 'department', 'designation', 'date_of_joining', 'password', 'avatar', 'manager', 'manager_details')
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
             'email': {'required': True}
         }
+
+    def get_manager_details(self, obj):
+        if obj.manager:
+            return {
+                'id': str(obj.manager._id),
+                'first_name': obj.manager.first_name,
+                'last_name': obj.manager.last_name,
+                'email': obj.manager.email
+            }
+        return None
 
     def create(self, validated_data):
         email = validated_data.pop('email')
