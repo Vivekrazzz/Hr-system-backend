@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'tasks',
     'attendance',
     'projects',
+    'chat',
 ]
 
 MIDDLEWARE = [

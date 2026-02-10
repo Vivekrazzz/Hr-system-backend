@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/tasks/', include('tasks.urls')),
     path('api/attendance/', include('attendance.urls')),
     path('api/projects/', include('projects.urls')),
+    path('api/chat/', include('chat.urls')),
 ]
 
 from django.conf import settings
