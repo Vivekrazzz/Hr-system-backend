@@ -30,6 +30,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, default='employee') # Removed strict choices
     employee_id = models.CharField(max_length=20, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     
     # Additional Details
     phone = models.CharField(max_length=15, null=True, blank=True)
