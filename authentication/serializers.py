@@ -1,8 +1,26 @@
 from rest_framework import serializers
 from .models import User
+from bson import ObjectId
+
+class MongoPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def to_internal_value(self, data):
+        try:
+            if isinstance(data, str) and len(data) == 24:
+                oid = ObjectId(data)
+            else:
+                oid = data
+            return self.get_queryset().get(pk=oid)
+        except Exception:
+            raise serializers.ValidationError(f"Invalid ID: {data}")
+
+    def to_representation(self, value):
+        if hasattr(value, 'pk'):
+            return str(value.pk)
+        return str(value)
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(read_only=True)
+    id = serializers.CharField(source='_id', read_only=True)
+    manager = MongoPrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
     manager_details = serializers.SerializerMethodField()
     
     class Meta:

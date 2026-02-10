@@ -38,3 +38,36 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.employee.email} - {self.date}"
+
+class LeaveRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    LEAVE_TYPES = [
+        ('sick', 'Sick Leave'),
+        ('casual', 'Casual Leave'),
+        ('vacation', 'Vacation'),
+        ('emergency', 'Emergency Leave'),
+        ('other', 'Other'),
+    ]
+
+    _id = mongo_models.ObjectIdField(primary_key=True)
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='leave_requests')
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinate_leaves')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    leave_type = models.CharField(max_length=20, choices=LEAVE_TYPES, default='casual')
+    reason = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    applied_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def id(self):
+        return self._id
+
+    def __str__(self):
+        return f"{self.employee.email} ({self.start_date} to {self.end_date}) - {self.status}"

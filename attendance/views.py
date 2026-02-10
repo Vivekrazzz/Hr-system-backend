@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.utils import timezone
-from .models import Attendance
-from .serializers import AttendanceSerializer
+from .models import Attendance, LeaveRequest
+from .serializers import AttendanceSerializer, LeaveRequestSerializer
 
 class CheckInView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -121,3 +121,86 @@ class AttendanceStatusView(generics.RetrieveAPIView):
             "is_checked_in": is_checked_in, 
             "attendance": AttendanceSerializer(attendance).data if attendance else None
         })
+
+class LeaveRequestCreateView(generics.CreateAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Automatically assign employee and their manager
+        # If manager has no boss (manager is None), it's an "inform" which is auto-approved
+        manager = self.request.user.manager
+        status = 'pending'
+        if not manager and self.request.user.role in ['manager', 'admin']:
+            status = 'approved'
+            
+        serializer.save(
+            employee=self.request.user,
+            manager=manager,
+            status=status
+        )
+
+class MyLeaveRequestListView(generics.ListAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return LeaveRequest.objects.filter(employee=self.request.user).order_by('-applied_at')
+
+class SubordinateLeaveRequestListView(generics.ListAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Only managers should see their subordinates' requests
+        if self.request.user.role == 'admin':
+            return LeaveRequest.objects.all().order_by('-applied_at')
+        
+        if self.request.user.role != 'manager':
+            return LeaveRequest.objects.none()
+            
+        return LeaveRequest.objects.filter(manager=self.request.user).order_by('-applied_at')
+
+class LeaveApprovalView(generics.UpdateAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        # Admins can manage all, managers manage their subordinates
+        if self.request.user.role == 'admin':
+            return LeaveRequest.objects.all()
+        return LeaveRequest.objects.filter(manager=self.request.user)
+
+    def get_object(self):
+        from bson import ObjectId
+        from django.shortcuts import get_object_or_404
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('id')
+        if pk and isinstance(pk, str) and len(pk) == 24:
+            try: pk = ObjectId(pk)
+            except: pass
+        return get_object_or_404(queryset, pk=pk)
+
+    def patch(self, request, *args, **kwargs):
+        status_val = request.data.get('status')
+        if status_val not in ['approved', 'rejected']:
+            return Response({"error": "Invalid status. Must be approved or rejected."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance = self.get_object()
+        instance.status = status_val
+        instance.save()
+        return Response(LeaveRequestSerializer(instance).data)
+
+class WhosOnLeaveView(generics.ListAPIView):
+    serializer_class = LeaveRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Return all approved leaves from the last 3 months onwards for the calendar
+        from datetime import timedelta
+        three_months_ago = timezone.now().date() - timedelta(days=90)
+        return LeaveRequest.objects.filter(
+            status='approved',
+            end_date__gte=three_months_ago
+        ).order_by('start_date')
